@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy &amp; ads - Ludo Party</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="/"><span class="brand-die" aria-hidden="true">&#127922;</span> Ludo Party</a></header>
+<main>
+  <article class="card prose">
+    <h1>Privacy &amp; advertising</h1>
+    <p class="muted">Template text &mdash; review it, add your contact details, and adapt it to the laws that apply to you before going live.</p>
+
+    <h2>What we keep</h2>
+    <ul>
+      <li>The nickname you type and a random player ID. Both are stored in your browser (local storage) so you can reconnect to a match after a refresh.</li>
+      <li>Room and match state (players, tokens, dice results) is held in the server's memory only while a room exists. Idle rooms are deleted automatically. There are no accounts and no match history yet.</li>
+    </ul>
+
+    <h2>Advertising</h2>
+    <p>This site is supported by advertising.
+    {% if ads.client %}Ads are provided by Google AdSense. Google and its partners may use cookies or similar technologies to show and measure ads and, where permitted, to personalise them. You can learn more and manage your choices at <a href="https://policies.google.com/technologies/ads" rel="noopener">policies.google.com/technologies/ads</a>.
+    {% else %}No advertising network is configured on this deployment yet.{% endif %}</p>
+    <p>Ads appear before a match starts, after it ends, and in a banner beside the board &mdash; never over the playable board during a game. Please don't click ads to support the site; accidental or artificial clicks are against ad-network policy and can get a site banned.</p>
+
+    <h2>Contact</h2>
+    <p>Add an email address or contact form here.</p>
+    <p><a class="btn" href="/">Back to the game</a></p>
+  </article>
+</main>
+</body>
+</html>

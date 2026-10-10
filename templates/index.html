@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ludo Party - Online Ludo for 2 to 10 Players</title>
+<meta name="description" content="Play Ludo online with friends. Create a private room, share the code and play with 2 to 10 players on a custom circular board. Free, in your browser, no sign-up.">
+<meta name="theme-color" content="#12142b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%B2%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% if ads.client %}<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ ads.client }}" crossorigin="anonymous"></script>{% endif %}
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/" aria-label="Ludo Party home"><span class="brand-die" aria-hidden="true">&#127922;</span> Ludo Party</a>
+  <span id="conn" class="conn" title="Connection status"><i></i><span>Connecting...</span></span>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section id="screen-home" class="screen active" aria-label="Start">
+    <div class="hero">
+      <h1>Ludo for <em>2&ndash;10</em> players</h1>
+      <p>Make a private room, share the code, and play together in your browser. Bigger tables get a custom circular board, so everyone gets a proper start.</p>
+    </div>
+    <div class="home-grid">
+      <div class="card">
+        <h2>Your name</h2>
+        <input id="name" maxlength="16" placeholder="e.g. Meera" autocomplete="nickname" aria-label="Your name">
+      </div>
+
+      <div class="card" id="card-create">
+        <h2>Create a room</h2>
+        <div class="field-label" id="count-label">How many players?</div>
+        <div id="count-chips" class="chips" role="radiogroup" aria-labelledby="count-label"></div>
+        <div class="opts">
+          <label>Tokens each
+            <select id="opt-tokens">
+              <option value="0">Auto (best for size)</option>
+              <option value="1">1</option><option value="2">2</option>
+              <option value="3">3</option><option value="4">4</option>
+            </select>
+          </label>
+          <label>Leaving the yard
+            <select id="opt-quick">
+              <option value="0">Classic - roll a 6</option>
+              <option value="1">Quick - any roll</option>
+            </select>
+          </label>
+          <label>Match ends
+            <select id="opt-mode">
+              <option value="first">When someone wins</option>
+              <option value="ranking">After full ranking</option>
+            </select>
+          </label>
+        </div>
+        <button id="btn-create" class="btn primary big">Create room</button>
+      </div>
+
+      <div class="card" id="card-join">
+        <h2>Join with a code</h2>
+        <input id="join-code" class="code-input" maxlength="5" placeholder="ABCDE" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Room code">
+        <button id="btn-join" class="btn big">Join room</button>
+        <p class="hint">Got an invite link? Just open it &mdash; the code fills in for you.</p>
+      </div>
+    </div>
+
+    <details class="howto card">
+      <summary>How to play</summary>
+      <ul>
+        <li><b>Goal:</b> bring all your tokens round the ring and up your coloured home lane into the centre.</li>
+        <li><b>Roll a 6</b> to bring a token out of the yard (or any roll in Quick mode). A 6, a capture, or a token getting home gives you another roll. Three 6s in a row lose the turn.</li>
+        <li><b>Capture</b> by landing exactly on an opponent. Cells with a &#9733; and every start cell are safe &mdash; tokens can share them.</li>
+        <li><b>Exact roll</b> needed to finish. Stuck? Nothing to move? The turn passes automatically.</li>
+        <li><b>Away?</b> If you stop playing for a couple of turns, a bot covers for you until you come back.</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- LOBBY -->
+  <section id="screen-lobby" class="screen" aria-label="Lobby">
+    <div class="lobby">
+      <div class="card code-card">
+        <div class="field-label">Room code</div>
+        <div class="big-code" id="lobby-code">-----</div>
+        <div class="row">
+          <button id="btn-copy-code" class="btn small">Copy code</button>
+          <button id="btn-copy-link" class="btn small">Copy invite link</button>
+          <button id="btn-share" class="btn small" hidden>Share&hellip;</button>
+        </div>
+        <p class="hint">Friends can join with this code or the invite link until the match starts.</p>
+      </div>
+
+      <div class="card">
+        <div class="seats-head"><h2>Players <span id="seat-count" class="pill"></span></h2></div>
+        <ul id="seats" class="seats"></ul>
+        <div id="host-tools" class="host-tools" hidden>
+          <button id="btn-bot" class="btn small">+ Add a bot</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Match rules</h2>
+        <div id="lobby-rules-host" class="opts" hidden>
+          <label>Seats
+            <select id="lr-max"></select>
+          </label>
+          <label>Tokens each
+            <select id="lr-tokens">
+              <option value="0">Auto</option><option value="1">1</option><option value="2">2</option>
+              <option value="3">3</option><option value="4">4</option>
+            </select>
+          </label>
+          <label>Leaving the yard
+            <select id="lr-quick"><option value="0">Classic - roll a 6</option><option value="1">Quick - any roll</option></select>
+          </label>
+          <label>Match ends
+            <select id="lr-mode"><option value="first">When someone wins</option><option value="ranking">After full ranking</option></select>
+          </label>
+        </div>
+        <p id="lobby-rules-text" class="hint"></p>
+      </div>
+
+      <div class="lobby-actions">
+        <button id="btn-start" class="btn primary big" hidden>Start match</button>
+        <p id="wait-host" class="hint" hidden>Waiting for the host to start the match&hellip;</p>
+        <button id="btn-leave-lobby" class="btn ghost">Leave room</button>
+      </div>
+
+      <div id="ad-lobby" class="ad-slot ad-banner" aria-label="Advertisement"></div>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="screen-game" class="screen" aria-label="Game">
+    <div class="game">
+      <div class="board-col">
+        <div class="board-wrap"><svg id="board" viewBox="-500 -500 1000 1000" role="img" aria-label="Ludo board"></svg></div>
+      </div>
+      <aside class="side">
+        <div id="turn-banner" class="turn-banner" aria-live="polite">
+          <span class="turn-dot" id="turn-dot"></span>
+          <div class="turn-text"><div id="turn-main">Waiting&hellip;</div><div id="turn-sub" class="muted"></div></div>
+          <div id="turn-timer" class="turn-timer" hidden></div>
+        </div>
+
+        <div class="card dice-card">
+          <button id="die" class="die" aria-label="Roll the dice" disabled>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </button>
+          <div class="dice-controls">
+            <button id="btn-roll" class="btn primary big" disabled>Roll dice</button>
+            <div id="choices" class="choices" hidden></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Players</h3>
+          <ul id="players" class="players"></ul>
+        </div>
+
+        <div class="card">
+          <h3>Game log</h3>
+          <ul id="log" class="log" aria-live="off"></ul>
+        </div>
+
+        <div id="ad-banner" class="ad-slot ad-banner" aria-label="Advertisement"></div>
+        <button id="btn-leave-game" class="btn ghost small">Leave match</button>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<!-- Pre-game screen: lobby info + advertisement while the match is being set up -->
+<div id="ov-start" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="ov-start-title">
+  <div class="sheet">
+    <h2 id="ov-start-title">Match starting&hellip;</h2>
+    <div class="countdown" id="countdown">6</div>
+    <div id="ov-start-players" class="chip-row"></div>
+    <p id="ov-start-rules" class="hint"></p>
+    <ul class="tips">
+      <li>Tap a glowing token to move it &mdash; or use the buttons under the dice.</li>
+      <li>Press <kbd>Space</kbd> to roll on a computer.</li>
+      <li>Stars and start cells are safe from captures.</li>
+    </ul>
+    <div id="ad-start" class="ad-slot ad-rect" aria-label="Advertisement"></div>
+  </div>
+</div>
+
+<!-- Post-game results -->
+<div id="ov-result" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="res-title">
+  <div class="sheet">
+    <div class="trophy" aria-hidden="true">&#127942;</div>
+    <h2 id="res-title">Winner</h2>
+    <p id="res-sub" class="muted"></p>
+    <div class="table-wrap">
+      <table class="results">
+        <thead><tr><th>#</th><th>Player</th><th title="Tokens home">Home</th><th title="Captures made">Hits</th><th title="Sixes rolled">Sixes</th><th title="Dice rolls">Rolls</th></tr></thead>
+        <tbody id="res-body"></tbody>
+      </table>
+    </div>
+    <div id="ad-result" class="ad-slot ad-rect" aria-label="Advertisement"></div>
+    <div class="row center">
+      <button id="btn-again" class="btn primary" hidden>Play again</button>
+      <span id="wait-again" class="hint" hidden>Waiting for the host to start another match&hellip;</span>
+      <button id="btn-review" class="btn">View board</button>
+      <button id="btn-leave-result" class="btn ghost">Leave room</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<footer class="foot">
+  <span>Ludo Party &middot; Free to play. Ads help keep it running.</span>
+  <a href="/privacy">Privacy &amp; ads</a>
+</footer>
+
+<script>window.LUDO_ADS = {{ ads|tojson }};</script>
+<script>
+/* Load in order: Socket.IO client (local copy, else CDN) -> board geometry -> app. */
+(function () {
+  var chain = [
+    ["{{ url_for('static', filename='vendor/socket.io.min.js') }}", "https://cdn.jsdelivr.net/npm/socket.io-client@4.8.1/dist/socket.io.min.js"],
+    ["{{ url_for('static', filename='board.js') }}"],
+    ["{{ url_for('static', filename='app.js') }}"]
+  ];
+  function load(i) {
+    if (i >= chain.length) return;
+    var urls = chain[i].slice();
+    (function next() {
+      var src = urls.shift();
+      if (!src) { document.getElementById('conn').lastElementChild.textContent = 'Failed to load game files'; return; }
+      var el = document.createElement('script');
+      el.src = src; el.onload = function () { load(i + 1); }; el.onerror = next;
+      document.head.appendChild(el);
+    })();
+  }
+  load(0);
+})();
+</script>
+</body>
+</html>
