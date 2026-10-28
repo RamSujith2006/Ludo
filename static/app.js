@@ -48,10 +48,12 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => { t.className = 'toast'; }, 3200);
   }
+  const playerCol = (seat) => (S.B && S.B.colors && S.B.colors[seat]) ? S.B.colors[seat] : LB.COLORS[seat];
+  const playerInk = (seat) => (S.B && S.B.ink && S.B.ink[seat]) ? S.B.ink[seat] : LB.INK[seat];
   const swatch = (seat, label) => {
     const s = h('span', { class: 'swatch', text: label == null ? String(seat + 1) : label });
-    s.style.background = LB.COLORS[seat];
-    s.style.color = LB.INK[seat];
+    s.style.background = playerCol(seat);
+    s.style.color = playerInk(seat);
     return s;
   };
 
@@ -139,14 +141,98 @@
   }
   const nameInput = $('#name');
   nameInput.value = store('name') || '';
+  const updateNameDisplay = () => {
+    const d = $('#profile-pill-name');
+    if (d) d.textContent = nameInput.value.trim() || 'Player';
+  };
+  updateNameDisplay();
+  nameInput.addEventListener('input', updateNameDisplay);
+
+  // Profile modal
+  const modalProfile = $('#modal-profile');
+  const openProfile = () => {
+    if (modalProfile) {
+      modalProfile.hidden = false;
+      nameInput.focus();
+    }
+  };
+  const closeProfile = () => {
+    if (modalProfile) modalProfile.hidden = true;
+    const n = nameInput.value.trim();
+    if (n) store('name', n);
+    updateNameDisplay();
+  };
+  const editProfBtn = $('#btn-edit-profile');
+  if (editProfBtn) editProfBtn.addEventListener('click', openProfile);
+  const topbarProfBtn = $('#btn-topbar-profile');
+  if (topbarProfBtn) topbarProfBtn.addEventListener('click', openProfile);
+  const closeProfBtn = $('#btn-close-profile');
+  if (closeProfBtn) closeProfBtn.addEventListener('click', closeProfile);
+  const saveProfBtn = $('#btn-save-profile');
+  if (saveProfBtn) saveProfBtn.addEventListener('click', closeProfile);
+  if (modalProfile) modalProfile.addEventListener('click', (e) => { if (e.target === modalProfile) closeProfile(); });
+
+  // How to play modal
+  const modalHowto = $('#modal-howto');
+  const openHowto = (e) => { if (e) e.preventDefault(); if (modalHowto) modalHowto.hidden = false; };
+  const closeHowto = () => { if (modalHowto) modalHowto.hidden = true; };
+  const cardHowto = $('#card-howto');
+  if (cardHowto) cardHowto.addEventListener('click', openHowto);
+  const navHowto = $('#nav-howto');
+  if (navHowto) navHowto.addEventListener('click', openHowto);
+  const closeHowtoBtn = $('#btn-close-howto');
+  if (closeHowtoBtn) closeHowtoBtn.addEventListener('click', closeHowto);
+  const doneHowtoBtn = $('#btn-done-howto');
+  if (doneHowtoBtn) doneHowtoBtn.addEventListener('click', closeHowto);
+  if (modalHowto) modalHowto.addEventListener('click', (e) => { if (e.target === modalHowto) closeHowto(); });
+
+  // Leaderboard modal
+  const modalLb = $('#modal-leaderboard');
+  const openLb = (e) => { if (e) e.preventDefault(); if (modalLb) modalLb.hidden = false; };
+  const closeLb = () => { if (modalLb) modalLb.hidden = true; };
+  const navLb = $('#nav-leaderboard');
+  if (navLb) navLb.addEventListener('click', openLb);
+  const closeLbBtn = $('#btn-close-leaderboard');
+  if (closeLbBtn) closeLbBtn.addEventListener('click', closeLb);
+  const closeLbBtn2 = $('#btn-close-lb');
+  if (closeLbBtn2) closeLbBtn2.addEventListener('click', closeLb);
+  if (modalLb) modalLb.addEventListener('click', (e) => { if (e.target === modalLb) closeLb(); });
+
+  // Nav rooms shortcut
+  const navRooms = $('#nav-rooms');
+  if (navRooms) {
+    navRooms.addEventListener('click', (e) => {
+      e.preventDefault();
+      codeInput.focus();
+      toast('Enter room code or create a room');
+    });
+  }
+
+  // Fullscreen button
+  const fsBtn = $('#btn-fullscreen');
+  if (fsBtn) {
+    fsBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+  }
+
   const codeInput = $('#join-code');
   codeInput.addEventListener('input', () => { codeInput.value = codeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
   codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btn-join').click(); });
 
   function requireName() {
     const name = nameInput.value.trim();
-    if (!name) { toast('Please enter your name first'); nameInput.focus(); return null; }
+    if (!name) {
+      toast('Please enter your name first');
+      openProfile();
+      return null;
+    }
     store('name', name);
+    updateNameDisplay();
     return name;
   }
   $('#btn-create').addEventListener('click', () => {
@@ -256,11 +342,11 @@
     const g = svgEl('g', { class: 'token' });
     g.append(
       svgEl('circle', { class: 'hit-area', r: B.tr + 9, fill: 'transparent' }),
-      svgEl('circle', { class: 'body', r: B.tr, fill: LB.COLORS[seat], stroke: '#fff', 'stroke-width': 3 }),
+      svgEl('circle', { class: 'body', r: B.tr, fill: playerCol(seat), stroke: '#fff', 'stroke-width': 3 }),
     );
     const label = svgEl('text', {
       class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'central',
-      'font-size': (B.tr * 1.05).toFixed(1), fill: LB.INK[seat],
+      'font-size': (B.tr * 1.05).toFixed(1), fill: playerInk(seat),
     });
     label.textContent = String(t + 1);
     g.append(label);
@@ -401,7 +487,7 @@
     } else { main = cur.name + ' rolled a ' + g.dice; sub = 'choosing a token…'; }
     $('#turn-main').textContent = main;
     $('#turn-sub').textContent = sub;
-    $('#turn-dot').style.background = LB.COLORS[g.turn];
+    $('#turn-dot').style.background = playerCol(g.turn);
     const banner = $('#turn-banner');
     banner.classList.toggle('mine', playing && mine);
     banner.style.cursor = g.over ? 'pointer' : '';
@@ -464,7 +550,7 @@
     log.replaceChildren();
     for (const e of g.log.slice().reverse().slice(0, 7)) {
       const dot = h('i');
-      dot.style.background = LB.COLORS[e.seat];
+      dot.style.background = playerCol(e.seat);
       log.append(h('li', {}, dot, h('span', { text: e.text })));
     }
 

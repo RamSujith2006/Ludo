@@ -5,79 +5,227 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ludo Party - Online Ludo for 2 to 10 Players</title>
 <meta name="description" content="Play Ludo online with friends. Create a private room, share the code and play with 2 to 10 players on a custom circular board. Free, in your browser, no sign-up.">
-<meta name="theme-color" content="#12142b">
+<meta name="theme-color" content="#070b1a">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%B2%3C/text%3E%3C/svg%3E">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 {% if ads.client %}<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ ads.client }}" crossorigin="anonymous"></script>{% endif %}
 </head>
 <body>
+<!-- Top Navbar -->
 <header class="topbar">
-  <a class="brand" href="/" aria-label="Ludo Party home"><span class="brand-die" aria-hidden="true">&#127922;</span> Ludo Party</a>
-  <span id="conn" class="conn" title="Connection status"><i></i><span>Connecting...</span></span>
+  <div class="topbar-left">
+    <a class="brand" href="/" aria-label="Ludo Party home">
+      <span class="brand-die-icon" aria-hidden="true">
+        <svg viewBox="0 0 36 36" width="32" height="32" class="die-3d-svg">
+          <defs>
+            <linearGradient id="cubeTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#f1f5f9"/></linearGradient>
+            <linearGradient id="cubeLeft" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#94a3b8"/></linearGradient>
+            <linearGradient id="cubeRight" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e2e8f0"/><stop offset="100%" stop-color="#cbd5e1"/></linearGradient>
+            <filter id="dieGlow"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#a855f7" flood-opacity="0.5"/></filter>
+          </defs>
+          <g filter="url(#dieGlow)">
+            <polygon points="18,4 32,11 18,18 4,11" fill="url(#cubeTop)"/>
+            <polygon points="4,11 18,18 18,32 4,25" fill="url(#cubeLeft)"/>
+            <polygon points="18,18 32,11 32,25 18,32" fill="url(#cubeRight)"/>
+            <circle cx="18" cy="11" r="1.8" fill="#a855f7"/>
+            <circle cx="11" cy="8" r="1.5" fill="#ec4899"/>
+            <circle cx="25" cy="14" r="1.5" fill="#ec4899"/>
+            <circle cx="11" cy="20" r="1.6" fill="#38bdf8"/>
+            <circle cx="11" cy="26" r="1.6" fill="#38bdf8"/>
+            <circle cx="25" cy="20" r="1.6" fill="#f43f5e"/>
+            <circle cx="22" cy="24" r="1.6" fill="#fb923c"/>
+            <circle cx="28" cy="26" r="1.6" fill="#f43f5e"/>
+          </g>
+        </svg>
+      </span>
+      <span class="brand-text">Ludo <span class="brand-party">Party</span></span>
+    </a>
+  </div>
+
+  <nav class="topbar-nav" aria-label="Main Navigation">
+    <a href="/" class="nav-link active" id="nav-home">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="#rooms" class="nav-link" id="nav-rooms">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span>Rooms</span>
+    </a>
+    <a href="#leaderboard" class="nav-link" id="nav-leaderboard">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"/><path d="M14 14.66V17c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+      <span>Leaderboard</span>
+    </a>
+    <a href="#howto" class="nav-link" id="nav-howto">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>How to Play</span>
+    </a>
+  </nav>
+
+  <div class="topbar-right">
+    <div id="conn" class="conn on" title="Connection status">
+      <i class="conn-dot"></i>
+      <span class="conn-text">Online</span>
+    </div>
+    <button class="topbar-avatar-btn" id="btn-topbar-profile" title="Player Profile / Edit Name" aria-label="Player profile">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+      </svg>
+    </button>
+    <button class="topbar-icon-btn" id="btn-fullscreen" title="Toggle Fullscreen" aria-label="Toggle Fullscreen">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+      </svg>
+    </button>
+  </div>
 </header>
 
 <main>
-  <!-- HOME -->
+  <!-- HOME SCREEN -->
   <section id="screen-home" class="screen active" aria-label="Start">
-    <div class="hero">
-      <h1>Ludo for <em>2&ndash;10</em> players</h1>
-      <p>Make a private room, share the code, and play together in your browser. Bigger tables get a custom circular board, so everyone gets a proper start.</p>
-    </div>
-    <div class="home-grid">
-      <div class="card">
-        <h2>Your name</h2>
-        <input id="name" maxlength="16" placeholder="e.g. Meera" autocomplete="nickname" aria-label="Your name">
+    <!-- Hero Header -->
+    <div class="hero-section">
+      <div class="hero-accent-bar" aria-hidden="true"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">Ludo for <span class="highlight-cyan">2–10</span> <span class="highlight-gradient">players</span></h1>
+        <p class="hero-subtitle">Make a private room, share the code, and play together in your browser.<br>Bigger tables get a custom circular board, so everyone gets a proper start.</p>
       </div>
+    </div>
 
-      <div class="card" id="card-create">
-        <h2>Create a room</h2>
-        <div class="field-label" id="count-label">How many players?</div>
-        <div id="count-chips" class="chips" role="radiogroup" aria-labelledby="count-label"></div>
-        <div class="opts">
-          <label>Tokens each
-            <select id="opt-tokens">
-              <option value="0">Auto (best for size)</option>
-              <option value="1">1</option><option value="2">2</option>
-              <option value="3">3</option><option value="4">4</option>
-            </select>
-          </label>
-          <label>Leaving the yard
-            <select id="opt-quick">
-              <option value="0">Classic - roll a 6</option>
-              <option value="1">Quick - any roll</option>
-            </select>
-          </label>
-          <label>Match ends
-            <select id="opt-mode">
-              <option value="first">When someone wins</option>
-              <option value="ranking">After full ranking</option>
-            </select>
-          </label>
+    <!-- Main Frontpage Layout -->
+    <div class="home-layout">
+      <!-- Left Column: Create a room card -->
+      <div class="card card-create-room" id="card-create">
+        <div class="card-header">
+          <div class="card-icon-badge purple-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            </svg>
+          </div>
+          <div class="card-title-group">
+            <h2>Create a room</h2>
+            <span class="card-subtitle" id="count-label">How many players?</span>
+          </div>
         </div>
-        <button id="btn-create" class="btn primary big">Create room</button>
+
+        <!-- Chips 2-10 in 2 rows -->
+        <div id="count-chips" class="chips chips-grid" role="radiogroup" aria-labelledby="count-label"></div>
+
+        <!-- Room Options -->
+        <div class="opts-list">
+          <div class="opt-item">
+            <label for="opt-tokens" class="opt-label">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="opt-icon purple"><path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+              <span>Tokens each</span>
+            </label>
+            <div class="select-wrap">
+              <select id="opt-tokens">
+                <option value="0">Auto (best for size)</option>
+                <option value="1">1</option><option value="2">2</option>
+                <option value="3">3</option><option value="4">4</option>
+              </select>
+              <svg class="select-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+
+          <div class="opt-item">
+            <label for="opt-quick" class="opt-label">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="opt-icon purple"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg>
+              <span>Leaving the yard</span>
+            </label>
+            <div class="select-wrap">
+              <select id="opt-quick">
+                <option value="0">Classic - roll a 6</option>
+                <option value="1">Quick - any roll</option>
+              </select>
+              <svg class="select-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+
+          <div class="opt-item">
+            <label for="opt-mode" class="opt-label">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="opt-icon purple"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1c1.9-.38 3.4-1.89 3.61-3.86C19.08 11.63 21 9.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+              <span>Match ends</span>
+            </label>
+            <div class="select-wrap">
+              <select id="opt-mode">
+                <option value="first">When someone wins</option>
+                <option value="ranking">After full ranking</option>
+              </select>
+              <svg class="select-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Button -->
+        <button id="btn-create" class="btn-create-glow" type="button">
+          <svg class="btn-plus-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+          <span>Create room</span>
+        </button>
       </div>
 
-      <div class="card" id="card-join">
-        <h2>Join with a code</h2>
-        <input id="join-code" class="code-input" maxlength="5" placeholder="ABCDE" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Room code">
-        <button id="btn-join" class="btn big">Join room</button>
-        <p class="hint">Got an invite link? Just open it &mdash; the code fills in for you.</p>
+      <!-- Middle Column: Join with code + How to play -->
+      <div class="home-mid-col">
+        <!-- Join with a code card -->
+        <div class="card card-join-room" id="card-join">
+          <div class="card-header">
+            <div class="card-icon-badge green-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <div class="card-title-group">
+              <h2>Join with a code</h2>
+              <span class="card-subtitle">Enter the room code to join an existing game.</span>
+            </div>
+          </div>
+
+          <div class="code-input-wrapper">
+            <svg class="code-input-lock" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+            <input id="join-code" class="code-input-field" maxlength="5" placeholder="e.g. ABCDE" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Room code">
+          </div>
+
+          <button id="btn-join" class="btn-join-glow" type="button">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            <span>Join room</span>
+          </button>
+
+          <div class="hint-join-bar">
+            <svg class="hint-icon-info" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <span>Got an invite link? Just open it &mdash; the code fills in for you.</span>
+          </div>
+        </div>
+
+        <!-- How to play horizontal card -->
+        <div class="card card-how-to-play" id="card-howto" role="button" tabindex="0">
+          <div class="htp-left">
+            <div class="htp-play-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="8,5 19,12 8,19"/></svg>
+            </div>
+            <div class="htp-text">
+              <h3>How to play</h3>
+              <p>Learn the rules and get started in seconds.</p>
+            </div>
+          </div>
+          <div class="htp-arrow-circle" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: 3D Board Graphic -->
+      <div class="home-visual-col">
+        <div class="hero-board-wrapper">
+          <img src="{{ url_for('static', filename='hero-board.jpg') }}" alt="Roll Play Win - Ludo 3D Board and Dice" class="hero-board-graphic" />
+        </div>
       </div>
     </div>
-
-    <details class="howto card">
-      <summary>How to play</summary>
-      <ul>
-        <li><b>Goal:</b> bring all your tokens round the ring and up your coloured home lane into the centre.</li>
-        <li><b>Roll a 6</b> to bring a token out of the yard (or any roll in Quick mode). A 6, a capture, or a token getting home gives you another roll. Three 6s in a row lose the turn.</li>
-        <li><b>Capture</b> by landing exactly on an opponent. Cells with a &#9733; and every start cell are safe &mdash; tokens can share them.</li>
-        <li><b>Exact roll</b> needed to finish. Stuck? Nothing to move? The turn passes automatically.</li>
-        <li><b>Away?</b> If you stop playing for a couple of turns, a bot covers for you until you come back.</li>
-      </ul>
-    </details>
   </section>
 
-  <!-- LOBBY -->
+  <!-- LOBBY SCREEN -->
   <section id="screen-lobby" class="screen" aria-label="Lobby">
     <div class="lobby">
       <div class="card code-card">
@@ -131,7 +279,7 @@
     </div>
   </section>
 
-  <!-- GAME -->
+  <!-- GAME SCREEN -->
   <section id="screen-game" class="screen" aria-label="Game">
     <div class="game">
       <div class="board-col">
@@ -170,6 +318,152 @@
     </div>
   </section>
 </main>
+
+<!-- Floating Profile Pill (Bottom Left, like reference UI) -->
+<div class="floating-profile-pill" id="profile-pill">
+  <button class="profile-pill-btn" id="btn-edit-profile" title="Edit your nickname" aria-label="Edit your nickname">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    <span>Edit</span>
+  </button>
+  <div class="profile-pill-info">
+    <span class="profile-pill-label">Player:</span>
+    <strong class="profile-pill-name" id="profile-pill-name">Meera</strong>
+  </div>
+</div>
+
+<!-- Modal: Player Name / Profile -->
+<div id="modal-profile" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="modal-profile-title">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modal-profile-title">Player Profile</h3>
+      <button class="modal-close-btn" id="btn-close-profile" aria-label="Close modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <label for="name" class="modal-label">Your Nickname</label>
+      <div class="modal-input-wrap">
+        <input id="name" maxlength="16" placeholder="e.g. Meera" autocomplete="nickname" aria-label="Your nickname" class="modal-input">
+      </div>
+      <p class="modal-hint">This name will be visible to everyone at the table and in the match results.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-create-glow modal-save-btn" id="btn-save-profile">Save &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: How to Play -->
+<div id="modal-howto" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="modal-howto-title">
+  <div class="modal-card modal-large">
+    <div class="modal-header">
+      <div class="modal-title-with-icon">
+        <div class="htp-play-circle" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="8,5 19,12 8,19"/></svg></div>
+        <h3 id="modal-howto-title">How to Play Ludo Party</h3>
+      </div>
+      <button class="modal-close-btn" id="btn-close-howto" aria-label="Close modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="howto-grid">
+        <div class="howto-item">
+          <div class="howto-num">1</div>
+          <div class="howto-desc">
+            <h4>Players &amp; Colours</h4>
+            <p>2–10 players. Each player chooses a colour: <strong>Red, Blue, Green, Yellow, Purple, Orange</strong>, and more depending on the match size.</p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-num">2</div>
+          <div class="howto-desc">
+            <h4>Starting the Game</h4>
+            <p>Each player has up to <strong>4 tokens</strong> inside their coloured home area (yard). The number of tokens adjusts for larger games.</p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-num">3</div>
+          <div class="howto-desc">
+            <h4>Getting a Token Out</h4>
+            <p>Roll a <strong>6</strong> to move a token from the yard onto the board. In <em>Quick</em> mode, any roll brings a token out. Rolling a 6 also grants an extra turn!</p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-num">4</div>
+          <div class="howto-desc">
+            <h4>Moving Tokens</h4>
+            <p>Move your token <strong>clockwise</strong> around the board according to the number shown on the dice. Plan your moves wisely!</p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-num">5</div>
+          <div class="howto-desc">
+            <h4>Rolling a 6</h4>
+            <p>Roll a 6 to get an <strong>extra turn</strong>. But beware: three 6s in a row <strong>forfeit your turn</strong> entirely!</p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-num">6</div>
+          <div class="howto-desc">
+            <h4>Capturing Opponents</h4>
+            <p>If your token lands on an opponent's token on a <strong>non-safe</strong> square, the opponent's token is sent back to their yard. You also earn a bonus roll!</p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-num">7</div>
+          <div class="howto-desc">
+            <h4>Safe Squares</h4>
+            <p>Cells marked with a <strong>★</strong> star and each player's <strong>start cell</strong> are safe zones &mdash; tokens on these squares cannot be captured.</p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-num">8</div>
+          <div class="howto-desc">
+            <h4>Reaching Home</h4>
+            <p>After completing the outer path, move your tokens along your own <strong>coloured home lane</strong> toward the centre. Only your tokens can enter your home lane.</p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-num">9</div>
+          <div class="howto-desc">
+            <h4>Exact Number Required</h4>
+            <p>You need the <strong>exact dice number</strong> to move a token into the final home position. If the roll overshoots, that token cannot move.</p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-num">10</div>
+          <div class="howto-desc">
+            <h4>Winning</h4>
+            <p>The first player to get <strong>all tokens home</strong> wins! In <em>Ranking</em> mode, play continues until the full ranking is decided. Disconnected players are replaced by bots.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-create-glow modal-save-btn" id="btn-done-howto">Got it, let's play!</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Leaderboard -->
+<div id="modal-leaderboard" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="modal-lb-title">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title-with-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="#ffd700"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1c1.9-.38 3.4-1.89 3.61-3.86C19.08 11.63 21 9.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+        <h3 id="modal-lb-title">Leaderboard &amp; Stats</h3>
+      </div>
+      <button class="modal-close-btn" id="btn-close-leaderboard" aria-label="Close modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="stats-summary">
+        <div class="stat-pill"><span class="stat-num" id="stat-matches">0</span><span class="stat-lbl">Matches</span></div>
+        <div class="stat-pill"><span class="stat-num" id="stat-wins">0</span><span class="stat-lbl">Wins</span></div>
+        <div class="stat-pill"><span class="stat-num" id="stat-hits">0</span><span class="stat-lbl">Captures</span></div>
+      </div>
+      <p class="modal-hint" style="text-align:center;margin-top:16px;">Play games with friends to track your win record and stats!</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-create-glow modal-save-btn" id="btn-close-lb">Close</button>
+    </div>
+  </div>
+</div>
 
 <!-- Pre-game screen: lobby info + advertisement while the match is being set up -->
 <div id="ov-start" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="ov-start-title">

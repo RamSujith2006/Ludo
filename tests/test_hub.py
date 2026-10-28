@@ -132,7 +132,7 @@ class HubTest(unittest.TestCase):
         for _ in range(400):
             st = self.state("s0")
             g = st["game"]
-            cur = st["players"][g["turn"]]
+            cur = st["players"][g["turn"]]  
             if st["phase"] == "playing":
                 if cur["bot"]:
                     self.assertIsNone(st["turn_left"])
@@ -201,7 +201,7 @@ class HubTest(unittest.TestCase):
     def test_everyone_leaves_deletes_room_and_idle_cleanup(self):
         code, _ = self.make_room(1)
         self.hub.leave("s0")
-        self.assertNotIn(code, self.hub.rooms)
+        self.assertNotIn(code, self.hub.rooms)  
         code, _ = self.make_room(1, bots=1)
         self.hub.disconnect("s0")
         self.advance(self.s.idle_room_ttl + 20, step=1)
@@ -232,4 +232,4 @@ class HubTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main()    

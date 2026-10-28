@@ -52,8 +52,8 @@ class Routes(unittest.TestCase):
 
     def test_all_socket_events_registered(self):
         mod = load_app({})
-        names = set(mod.socketio.handlers) if hasattr(mod.socketio, "handlers") else None
-        if names is not None:
+        names = set(getattr(mod.socketio.server, "handlers", {}).get("/", {})) if hasattr(mod.socketio, "server") else set(getattr(mod.socketio, "handlers", []))
+        if names:
             self.assertTrue({"create", "join", "rejoin", "config", "add_bot", "kick", "start",
                              "roll", "move", "again", "leave", "disconnect"} <= names)
 
